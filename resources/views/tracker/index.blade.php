@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Work Hours Tracker</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
@@ -31,6 +31,11 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        @else
+            {{-- Active Sessions --}}
+            <div class="bg-dark">
+                <p class="bg-blue-500">hey</p>
             </div>
         @endif
     </div>
