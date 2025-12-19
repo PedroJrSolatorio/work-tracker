@@ -12,7 +12,14 @@ class WorkSessionController extends Controller
      */
     public function index()
     {
-        //
+        $today = now()->toDateString();
+        $session = WorkSession::whereDate('date', $today)->first();
+
+        $recentSessions = WorkSession::orderBy('date', 'desc')
+            ->take(7)
+            ->get();
+
+        return view('tracker.index', compact('session', 'recentSessions'));
     }
 
     /**
@@ -28,7 +35,23 @@ class WorkSessionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'target_hours' => 'required|numeric|min:0.5|max:24'
+        ]);
+
+        $today = now()->toDateString();
+
+        $session = WorkSession::updateOrCreate(
+            ['date' => $today],
+            [
+                'target_minutes' => $request->target_hours * 60,
+                'worked_minutes' => 0,
+                'status' => 'paused'
+            ]
+        );
+
+        return redirect()->route('tracker.index')
+            ->with('success', 'Work session created! Target: ' . $request->target_hours . ' hours');
     }
 
     /**
