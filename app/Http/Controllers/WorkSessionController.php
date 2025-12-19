@@ -36,7 +36,7 @@ class WorkSessionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'target_hours' => 'required|numeric|min:0.5|max:24'
+            'target_hours' => 'required|decimal:0,1|min:0.5|max:24'
         ]);
 
         $today = now()->toDateString();
