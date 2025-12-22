@@ -84,7 +84,8 @@ class WorkSessionController extends Controller
                 ->first();
 
             if ($currentLog) {
-                $duration = now()->diffInMinutes($currentLog->start_time);
+                //use absolute value to ensure positive duration
+                $duration = abs($currentLog->start_time->diffInMinutes(now()));
 
                 $currentLog->update([
                     'end_time' => now(),

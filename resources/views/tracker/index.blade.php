@@ -168,7 +168,7 @@
 
                 //calculate remaining time
                 const remainingMinutes = Math.max(0, targetMinutes - totalWorkedMinutes);
-                const remainingSeconds = remaningMinutes * 60;
+                const remainingSeconds = remainingMinutes * 60;
 
                 //update remaining time display
                 document.getElementById('remaining-time').textContent = (remainingMinutes / 60).toFixed(1) + 'h';
