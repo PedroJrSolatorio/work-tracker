@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TimeLog;
 use App\Models\WorkSession;
 use Illuminate\Http\Request;
 
@@ -52,6 +53,60 @@ class WorkSessionController extends Controller
 
         return redirect()->route('tracker.index')
             ->with('success', 'Work session created! Target: ' . $request->target_hours . ' hours');
+    }
+
+    public function start($id)
+    {
+        $session = WorkSession::findOrFail($id);
+
+        $session->update([
+            'status' => 'active',
+            'current_start_time' => now()
+        ]);
+
+        TimeLog::create([
+            'work_session_id' => $session->id,
+            'start_time' => now()
+        ]);
+
+        return redirect()->route('tracker.index')
+            ->with('success', 'Timer started!');
+    }
+
+    public function pause($id)
+    {
+        $session = WorkSession::findOrFail($id);
+
+        if ($session->status === 'active') {
+            $currentLog = $session->timeLogs()
+                ->whereNull('end_time')
+                ->latest()
+                ->first();
+
+            if ($currentLog) {
+                $duration = now()->diffInMinutes($currentLog->start_time);
+
+                $currentLog->update([
+                    'end_time' => now(),
+                    'duration_minutes' => $duration
+                ]);
+
+                $session->increment('worked_minutes', $duration);
+            }
+
+            $session->update([
+                'status' => 'paused',
+                'current_start_time' => null
+            ]);
+
+            //check if completed
+            if ($session->worked_minutes >= $session->target_minutes) {
+                $session->update(['status' => 'completed']);
+            }
+        }
+
+        return redirect()->route('tracker.index')
+            ->with('success', 'Timer paused!');
     }
 
     /**
