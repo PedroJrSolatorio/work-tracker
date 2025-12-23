@@ -119,7 +119,7 @@
                                 ▶ Start Timer
                             </button>
                         </form>
-                        @else
+                    @else
                         <form action="{{ route('tracker.pause', $session->id) }}" method="POST" class="flex-1">
                             @csrf
                             <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium text-lg">
@@ -128,7 +128,52 @@
                         </form>
                     @endif
 
+                    <button onclick="document.getElementById('updateTargetModal').classList.remove('hidden')" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium">
+                        &#9881; Update Target
+                    </button>
+                    
 
+                </div>
+            </div>
+
+            {{-- Update Target Modal --}}
+            <div id="updateTargetModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Update Target Hours</h3>
+                        <button>
+                            &times;
+                        </button>
+                    </div>
+
+                    <form action="{{ route('tracker.update', $session->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="mb-4">
+                            <label for="" class="block text-sm font-medium text-gray-700 mb-2">
+                                Current Target: <span class="text-blue-600 font-bold">{{number_format($session->target_minutes / 60, 1)}} hours</span>
+                            </label>
+                            <label for="" class="block text-sm font-medium text-gray-700 mb-2">
+                                Already Worked: <span class="text-green-600 font-bold">{{number_format($session->worked_minutes / 60, 1)}} hours</span>
+                            </label>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="" class="block text-sm font-medium text-gray-700 mb-2">New Target Hours</label>
+                            <input type="number" name="target_hours" step="0.5" min="0.5" max="24" value="{{ number_format($session->target_minutes / 60, 1) }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <p class="text-xs text-gray-500 mt-1">Enter the new target duration for today</p>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button type="button" onclick="document.getElementById('updateTargetModal').classList.add('hidden')" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg font-medium">
+                                Cancel
+                            </button>
+                            <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium">
+                                Update Target
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         @endif

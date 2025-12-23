@@ -129,9 +129,34 @@ class WorkSessionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, WorkSession $workSession)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'target_hours' => 'required|decimal:0,1|min:0.5|max:24'
+        ]);
+
+        $session = WorkSession::findOrFail($id);
+        $newTargetMinutes = $request->target_hours * 60;
+
+        //warn if new target is less than already worked time
+        if ($newTargetMinutes < $session->worked_minutes) {
+            return redirect()->route('tracker.index')
+                ->with('success', 'Target updated! Note: You\'ve already exceeded this target with' . number_format($session->worked_minutes / 60, 1) . ' hours worked.');
+        }
+
+        $session->update([
+            'target_minutes' => $newTargetMinutes
+        ]);
+
+        //update status if applicable
+        if ($session->worked_minutes >= $newTargetMinutes) {
+            $session->update(['status' => 'completed']);
+        } elseif ($session->status === 'completed') {
+            $session->update(['status' => 'paused']);
+        }
+
+        return redirect()->route('tracker.index')
+            ->with('success', 'Target updated to ' . $request->target_hours . ' hours!');
     }
 
     /**
