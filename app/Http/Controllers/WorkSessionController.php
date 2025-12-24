@@ -113,9 +113,40 @@ class WorkSessionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(WorkSession $workSession)
+    public function show($id)
     {
-        //
+        $session = WorkSession::with('timeLogs')->findOrFail($id);
+
+        // Calculate total break time
+        $breakMinutes = 0;
+        $logs = $session->timeLogs;
+
+        for ($i = 0; $i < $logs->count() - 1; $i++) {
+            if ($logs[$i]->end_time && $logs[$i + 1]->start_time) {
+                $breakMinutes += $logs[$i]->end_time->diffInMinutes($logs[$i + 1]->start_time);
+            }
+        }
+
+        return view('tracker.show', compact('session', 'breakMinutes'));
+    }
+
+    public function stats()
+    {
+        $sessions = WorkSession::orderBy('date', 'desc')->take(30)->get();
+
+        $stats = [
+            'total_days' => $sessions->count(),
+            'completed_days' => $sessions->where('status', 'completed')->count(),
+            'total_hours_worked' => round($sessions->sum('worked_minutes') / 60, 1),
+            'avg_hours_per_day' => $sessions->count() > 0
+                ? round($sessions->avg('worked_minutes') / 60, 1)
+                : 0,
+            'completion_rate' => $sessions->count() > 0
+                ? round(($sessions->where('status', 'completed')->count() / $sessions->count()) * 100, 1)
+                : 0,
+        ];
+
+        return view('tracker.stats', compact('sessions', 'stats'));
     }
 
     /**
