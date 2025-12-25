@@ -137,7 +137,12 @@
                         &#9881; Update Target
                     </button>
                     
-
+                    <form action="{{ route('tracker.reset', $session->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to reset this session?')">
+                        @csrf
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium">
+                            Reset
+                        </button>
+                    </form>
                 </div>
             </div>
 
@@ -146,7 +151,7 @@
                 <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-semibold text-gray-800">Update Target Hours</h3>
-                        <button>
+                        <button onclick="document.getElementById('updateTargetModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700 text-2xl">
                             &times;
                         </button>
                     </div>

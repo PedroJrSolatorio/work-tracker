@@ -110,6 +110,21 @@ class WorkSessionController extends Controller
             ->with('success', 'Timer paused!');
     }
 
+    public function reset($id)
+    {
+        $session = WorkSession::findOrFail($id);
+
+        $session->timeLogs()->delete();
+        $session->update([
+            'worked_minutes' => 0,
+            'status' => 'paused',
+            'current_start_time' => null
+        ]);
+
+        return redirect()->route('tracker.index')
+            ->with('success', 'Session reset!');
+    }
+
     /**
      * Display the specified resource.
      */
