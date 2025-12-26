@@ -188,6 +188,67 @@
             </div>
 
             {{-- Time Logs --}}
+            {{-- USING: timeLogs() relationship --}}
+            @if ($session->timeLogs->count() > 0)
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Time Logs ({{ $session->timeLogs->count() }} sessions)</h3>
+                    <div class="space-y-2">
+                        {{-- USING: timeLogs() relationship to loop through logs --}}
+                        @foreach ($session->timeLogs as $index => $log)
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded hover:bg-gray-100">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium">
+                                            Session {{ $index + 1 }}
+                                        </span>
+                                        <span class="font-medium">{{$log->start_time->format('h:1 A')}}</span>
+                                        @if ($log->end_time)
+                                            <span class="text-gray-600"> &#8594; {{$log->end_time->format('h:i A')}}</span>
+                                        @else
+                                            <span class="text-green-600 font-medium"> &#8594; Active Now</span>
+                                        @endif
+                                    </div>
+                                    @if ($log->end_time && isset($session->timeLogs[$index + 1]))
+                                        @php
+                                            $nextLog = $session->timeLogs[$index + 1];
+                                            $breakMinutes = $log->end_time->diffInMinutes($nextLog->start_time);
+                                        @endphp
+                                        @if ($breakMinutes > 0)
+                                            <p class="text-xs text-gray-500 mt-1">
+                                                ☕ Break: {{ $breakMinutes }} min before next session
+                                            </p>                                            
+                                        @endif
+                                    @endif
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    @if ($log->duration_minutes)
+                                        <div class="text-right">
+                                            <p class="text-lg font-bold text-blue-600">{{gmdate('H:i:s', $log->duration_minutes * 60)}}</p>
+                                            <p class="text-xs text-gray-500">{{$log->duration_minutes}} minutes</p>
+                                        </div>
+                                    @else
+                                        <div class="text-right">
+                                            <p class="text-sm text-green-600 font-medium animate-pulse">
+                                                In Progress...
+                                            </p>
+                                        </div>
+                                    @endif
+                                    @if ($log->end_time)
+                                        <form action="{{ route('timelog.destroy', $log->id) }}" method="POST"
+                                            onsubmit="return confirm('Delete this time log?')" class="">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-500 hover:text-red-700 text-sm">
+                                                🗑️
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         @endif
     </div>
 

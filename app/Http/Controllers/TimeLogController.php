@@ -58,8 +58,24 @@ class TimeLogController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TimeLog $timeLog)
+    public function destroy($id)
     {
-        //
+        $log = TimeLog::findOrFail($id);
+        $session = $log->workSession;
+
+        //subtract the log duration from session worked minutes
+        if ($log->duration_minutes) {
+            $session->decrement('worked_minutes', $log->duration_minutes);
+        }
+
+        $log->delete();
+
+        //update session status if needed
+        if ($session->worked_minutes < $session->target_minutes) {
+            $session->update(['status' => 'paused']);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Time log deleted!');
     }
 }

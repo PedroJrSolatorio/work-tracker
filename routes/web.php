@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TimeLogController;
 use App\Http\Controllers\WorkSessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,3 +16,4 @@ Route::post('/session/{id}/reset', [WorkSessionController::class, 'reset'])->nam
 Route::put('/session/{id}/target', [WorkSessionController::class, 'update'])->name('tracker.update');
 Route::get('/stats', [WorkSessionController::class, 'stats'])->name('tracker.stats');
 Route::get('/session/{id}', [WorkSessionController::class, 'show'])->name('tracker.show');
+Route::delete('/timelog/{id}', [TimeLogController::class, 'destroy'])->name('timelog.destroy');
