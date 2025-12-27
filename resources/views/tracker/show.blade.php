@@ -118,7 +118,7 @@
                                     @if($breakDuration > 0)
                                         <div class="mt-2 pt-2 border-t border-gray-200">
                                             <p class="text-xs text-gray-500">
-                                                ☕ Break: {{ $breakDuration }} minutes 
+                                                ☕ Break: {{ number_format($breakDuration, 1) }} minutes 
                                                 ({{ $log->end_time->format('g:i A') }} - {{ $nextLog->start_time->format('g:i A') }})
                                             </p>
                                         </div>
