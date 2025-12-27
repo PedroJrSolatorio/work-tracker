@@ -247,8 +247,62 @@
                             </div>
                         @endforeach
                     </div>
+
+                    {{-- Summary of all sessions --}}
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <p class="text-xs text-gray-600">Total Sessions</p>
+                                <p class="text-lg font-bold text-gray-800">
+                                    {{$session->timeLogs->count()}}
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-600">Total Time Worked</p>
+                                <p class="text-lg font-bold text-blue-600">
+                                    {{gmdate('H:i:s', $session->worked_minutes * 60)}}
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-600">Avg Session Length</p>
+                                <p class="text-lg font-bold text-purple-600">
+                                    @php
+                                        $completedLogs = $session->timeLogs->where('duration_minutes', '>', 0);
+                                        $avgDuration = $completedLogs->count() > 0 ? $completedLogs->avg('duration_muinutes') : 0;
+                                    @endphp
+                                    {{ number_format($avgDuration, 0) }} min
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             @endif
+        @endif
+
+        {{-- Recent Sessions --}}
+        @if ($recentSessions->count() > 0)
+            <div class="bg-white rounded-lg shadow-lg p-6 mt-8">
+                <h3 class="text-xl font-semibold mb-4">RecentSessions</h3>
+                <div class="space-y-3">
+                    @foreach ($recentSessions as $recent)
+                        <a href="{{ route('tracker.show', $recent->id) }}" class="flex justify-between items-center p-3 bg-gray-50 rounded hover:bg-gray-100 transition">
+                            <div>
+                                <p class="font-medium">{{$recent->date->format('M j, Y')}}</p>
+                                <p class="text-sm text-gray-600">
+                                    {{ number_format($recent->worked_minutes / 60, 1) }}h / {{ number_format($recent->target_minutes / 60, 1) }}h
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                {{-- USING: getProgressPercentageAttribute() --}}
+                                <p class="text-sm font-meduim text-gray-700">{{$recent->progress_percentage}}%</p>
+                                <span class="text-xs px-2 py-1 rounded-full {{ $recent->status === 'completed' ? 'bg-blue-100 text-blue-800' : 'bg-gray-200 text-gray-700' }}">
+                                    {{ ucfirst($recent->status) }}
+                                </span>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
         @endif
     </div>
 
