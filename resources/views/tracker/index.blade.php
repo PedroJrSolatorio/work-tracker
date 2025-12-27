@@ -221,7 +221,7 @@
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    @if ($log->duration_minutes)
+                                    @if ($log->end_time)
                                         <div class="text-right">
                                             <p class="text-lg font-bold text-blue-600">{{gmdate('H:i:s', $log->duration_minutes * 60)}}</p>
                                             <p class="text-xs text-gray-500">{{$log->duration_minutes}} minutes</p>

@@ -96,7 +96,7 @@
                                         </p>
                                     </div>
                                     <div class="text-right">
-                                        @if($log->duration_minutes)
+                                        @if($log->end_time)
                                             <p class="text-lg font-bold text-blue-600">
                                                 {{ gmdate('H:i:s', $log->duration_minutes * 60) }}
                                             </p>
