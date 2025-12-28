@@ -46,7 +46,7 @@
                     label="Target" 
                     :value="number_format($session->target_minutes / 60, 1) . 'h'"
                     :detail="gmdate('H:i:s', $session->target_minutes * 60)"
-                    color="gray" 
+                    color="gray"
                 />
 
                  <x-stat-card 
@@ -121,16 +121,28 @@
             const totalWorkedSeconds = totalWorkedMinutes * 60;
 
             //update worked time display
-            document.getElementById('worked-time').textContent = (totalWorkedMinutes / 60).toFixed(1) + 'h';
-            document.getElementById('worked-time-detailed').textContent = formatTime(totalWorkedSeconds);
+            const workedTimeEl = document.querySelector('#worked-time-card .text-2xl');
+                const workedTimeDetailEl = document.querySelector('#worked-time-card .text-xs');
+                if (workedTimeEl) {
+                    workedTimeEl.textContent = (totalWorkedMinutes / 60).toFixed(1) + 'h';
+                }
+                if (workedTimeDetailEl) {
+                    workedTimeDetailEl.textContent = formatTime(totalWorkedSeconds);
+                }
 
             //calculate remaining time
             const remainingMinutes = Math.max(0, targetMinutes - totalWorkedMinutes);
             const remainingSeconds = remainingMinutes * 60;
 
             //update remaining time display
-            document.getElementById('remaining-time').textContent = (remainingMinutes / 60).toFixed(1) + 'h';
-            document.getElementById('remaining-time-detailed').textContent = formatTime(remainingSeconds);
+            const remainingTimeEl = document.querySelector('#remaining-time-card .text-2xl');
+                const remainingTimeDetailEl = document.querySelector('#remaining-time-card .text-xs');
+                if (remainingTimeEl) {
+                    remainingTimeEl.textContent = (remainingMinutes / 60).toFixed(1) + 'h';
+                }
+                if (remainingTimeDetailEl) {
+                    remainingTimeDetailEl.textContent = formatTime(remainingSeconds);
+                }
 
             //update countdown timer (time until goal)
             document.getElementById('countdown-timer').textContent = formatTime(remainingSeconds);
